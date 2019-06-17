@@ -1,18 +1,23 @@
 import numpy as np
 
-from settings import *
-from audio import Audio
-from modules.keyboard import Keyboard
-from modules.midi_table import MidiTable
-from modules.sine import Sine
-from modules.sma_filter import SMAFilter
-from modules.rc_filter import RCFilter
+from .settings import *
+from .audio import Audio
+from .modules.keyboard import Keyboard
+from .modules.midi_table import MidiTable
+from .modules.sine import Sine
+from .modules.sma_filter import SMAFilter
+from .modules.rc_filter import RCFilter
 
 
-class Synth(object):
-    """Synthesizer"""
+class DemoSynth(object):
+    """Synthesizer demo class.
+
+    A modular synthesizer that takes input from the computer keyboard and generates audio.
+    """
 
     def __init__(self):
+        """Setup a modular synthesizer."""
+        # audio device
         self.audio = Audio(sample_rate=SAMPLE_RATE, buffer_size=BUFFER_SIZE, volume=.5)
 
         # modules
@@ -36,18 +41,30 @@ class Synth(object):
         #out = RCFilter(out, alpha=0.1)
         #out = RCFilter(out, alpha=0.1)
 
-        # assign output
+        # assign output function
         self.out = out
 
     def done(self, t):
-        if self.keyboard.quit: # or t > 2:
+        """Check if done.
+
+        The synth will stop when done returns True.
+
+        :param t float: The current time.
+        :rtype: bool
+        """
+        if self.keyboard.quit:
             self.keyboard.terminate()
             return True
         return False
 
     def start(self):
-        self.audio.start(self.out, self.done)
+        """Start the synth.
+
+        It will run until done returns True.
+        """
+        # start the audio stream with callback functions
+        self.audio.start_stream(callback=self.out, done=self.done)
 
 
 if __name__ == '__main__':
-    Synth().start()
+    DemoSynth().start()
