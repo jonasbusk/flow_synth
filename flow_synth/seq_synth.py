@@ -3,10 +3,7 @@ import numpy as np
 from .settings import *
 from .audio import Audio
 from .modules.keyboard import Keyboard
-#from .modules.midi_table import MidiTable
 from .modules.sine import Sine
-#from .modules.sma_filter import SMAFilter
-#from .modules.rc_filter import RCFilter
 from .modules.trigger import Trigger
 from .modules.counter import Counter
 

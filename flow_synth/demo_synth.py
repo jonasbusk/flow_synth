@@ -7,6 +7,7 @@ from .modules.midi_table import MidiTable
 from .modules.sine import Sine
 from .modules.sma_filter import SMAFilter
 from .modules.rc_filter import RCFilter
+from .modules.ar_envelope import AREnvelope
 
 
 class DemoSynth(object):
@@ -26,19 +27,17 @@ class DemoSynth(object):
 
         # frequency modulation
         lfo1 = Sine(frequency=lambda t: 4) * (lambda t: .5)
-        out = Sine(frequency=midi_table, fm=lfo1)
+        out = Sine(frequency=midi_table, fm=lfo1, hold=True)
 
         # amplitude modulation
-        lfo2 = Sine(frequency=lambda t: 0.5, normalize=False)
+        #lfo2 = Sine(frequency=lambda t: 0.5, normalize=False)
         #out = out * lfo2
 
+        # envelope
+        out = AREnvelope(out, trigger=self.keyboard.trigger, attack=0.0, release=0.5)
+
         # remove clicks with low pass filter
-        out = SMAFilter(out, w=42)
-        #out = RCFilter(out, alpha=0.1)
-        #out = RCFilter(out, alpha=0.1)
-        #out = RCFilter(out, alpha=0.1)
-        #out = RCFilter(out, alpha=0.1)
-        #out = RCFilter(out, alpha=0.1)
+        out = SMAFilter(out, w=int(SAMPLE_RATE/1000))
         #out = RCFilter(out, alpha=0.1)
 
         # assign output function

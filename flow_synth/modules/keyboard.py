@@ -20,15 +20,26 @@ class Keyboard(Module):
         pygame.quit()
 
     def out(self, t):
-        if t - self.last_update > self.update_frequency:
-            self.update()
-            self.last_update = t
+        self.update(t)
         if self.key is not None:
             return 12 * self.octave + self.key
         else:
             return None
 
-    def update(self):
+    def trigger(self, t):
+        self.update(t)
+        if self.key is not None:
+            return True
+        else:
+            return False
+
+    def update(self, t):
+        # check if already updated recently
+        if t - self.last_update < self.update_frequency:
+            return
+        self.last_update = t
+
+        # update
         events = pygame.event.get()
         keys = pygame.key.get_pressed()
         # events
